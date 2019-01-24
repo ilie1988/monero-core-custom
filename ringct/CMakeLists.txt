@@ -1,4 +1,5 @@
-# Copyright (c) 2016-2018, The Monero Project
+# Copyright (c) 2017-2018, The Monero Project
+# Copyright (c) 2018, The BitTube Project
 #
 # All rights reserved.
 #
@@ -30,11 +31,14 @@ set(ringct_basic_sources
   rctOps.cpp
   rctTypes.cpp
   rctCryptoOps.c
-  bulletproofs.cc)
+  multiexp.cc
+  bulletproofs.cc
+  bulletproofs2.cc)
 
 set(ringct_basic_private_headers
   rctOps.h
   rctTypes.h
+  multiexp.h
   bulletproofs.h)
 
 monero_private_headers(ringct_basic

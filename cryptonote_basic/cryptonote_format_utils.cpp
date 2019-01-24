@@ -366,6 +366,8 @@ namespace cryptonote
     const size_t n_outputs = tx.vout.size();
     if (n_outputs <= 2)
       return blob_size;
+    if (rv.type != rct::RCTTypeBulletproof)
+      return blob_size;    
     const uint64_t bp_base = 368;
     const size_t n_padded_outputs = rct::n_bulletproof_max_amounts(rv.p.bulletproofs);
     size_t nlr = 0;
@@ -777,11 +779,9 @@ namespace cryptonote
   {
     switch (decimal_point)
     {
-      case 12:
-      case 9:
-      case 6:
-      case 3:
-      case 0:
+       case 8:
+       case 5:
+       case 2:
         default_decimal_point = decimal_point;
         break;
       default:
@@ -798,20 +798,16 @@ namespace cryptonote
   {
     if (decimal_point == (unsigned int)-1)
       decimal_point = default_decimal_point;
-    switch (std::atomic_load(&default_decimal_point))
+    switch (decimal_point)
     {
-      case 12:
-        return "monero";
-      case 9:
-        return "millinero";
-      case 6:
-        return "micronero";
-      case 3:
-        return "nanonero";
-      case 0:
-        return "piconero";
+      case CRYPTONOTE_DISPLAY_DECIMAL_POINT:
+        return "bittube";
+      case CRYPTONOTE_DISPLAY_DECIMAL_POINT - 3:
+        return "millitube";
+      case CRYPTONOTE_DISPLAY_DECIMAL_POINT - 6:
+        return "microtube";
       default:
-        ASSERT_MES_AND_THROW("Invalid decimal point specification: " << default_decimal_point);
+        ASSERT_MES_AND_THROW("Invalid decimal point specification: " << decimal_point);
     }
   }
   //---------------------------------------------------------------
@@ -1055,16 +1051,13 @@ namespace cryptonote
   //---------------------------------------------------------------
   bool get_block_longhash(const block& b, crypto::hash& res, uint64_t height)
   {
-    // block 202612 bug workaround
-    const std::string longhash_202612 = "84f64766475d51837ac9efbef1926486e58563c95a19fef4aec3254f03000000";
-    if (height == 202612)
-    {
-      string_tools::hex_to_pod(longhash_202612, res);
-      return true;
-    }
     blobdata bd = get_block_hashing_blob(b);
-    const int cn_variant = b.major_version >= 7 ? b.major_version - 6 : 0;
-    crypto::cn_slow_hash(bd.data(), bd.size(), res, cn_variant);
+    if (b.major_version >= BLOCK_MAJOR_VERSION_4){
+      const int cn_variant = b.major_version >= HF_VERSION_POW_VARIANT2 ? 2 : 1;
+      crypto::cn_slow_hash(bd.data(), bd.size(), res, cn_variant);
+    }else{
+      crypto::cn_slow_hash(bd.data(), bd.size(), res);
+    }
     return true;
   }
   //---------------------------------------------------------------
