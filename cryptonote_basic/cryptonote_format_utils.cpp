@@ -412,12 +412,6 @@ namespace cryptonote
     const rct::rctSig &rv = tx.rct_signatures;
     if (!rct::is_rct_bulletproof(rv.type))
       return blob_size;
-    const size_t n_outputs = tx.vout.size();
-    if (n_outputs <= 2)
-      return blob_size;
-    if (rv.type != rct::RCTTypeBulletproof || rv.type != rct::RCTTypeBulletproof2)
-      return blob_size;    
-    const uint64_t bp_base = 368;
     const size_t n_padded_outputs = rct::n_bulletproof_max_amounts(rv.p.bulletproofs);
     uint64_t bp_clawback = get_transaction_weight_clawback(tx, n_padded_outputs);
     CHECK_AND_ASSERT_THROW_MES_L1(bp_clawback <= std::numeric_limits<uint64_t>::max() - blob_size, "Weight overflow");
@@ -1282,21 +1276,6 @@ namespace cryptonote
     return p;
   }
   //---------------------------------------------------------------
-<<<<<<< HEAD
-  bool get_block_longhash(const block& b, crypto::hash& res, uint64_t height)
-  {
-    blobdata bd = get_block_hashing_blob(b);
-    if (b.major_version >= BLOCK_MAJOR_VERSION_4){
-      const int cn_variant = b.major_version >= HF_VERSION_POW_VARIANT2 ? 2 : 1;
-      crypto::cn_slow_hash(bd.data(), bd.size(), res, cn_variant);
-    }else{
-      crypto::cn_slow_hash(bd.data(), bd.size(), res);
-    }
-    return true;
-  }
-  //---------------------------------------------------------------
-=======
->>>>>>> monero/master
   std::vector<uint64_t> relative_output_offsets_to_absolute(const std::vector<uint64_t>& off)
   {
     std::vector<uint64_t> res = off;

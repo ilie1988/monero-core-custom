@@ -256,7 +256,7 @@ namespace rct {
         {
           FIELD(type)
           if (type == RCTTypeNull)
-            return true;
+            return ar.stream().good();
           if (type != RCTTypeFull && type != RCTTypeFullBulletproof && type != RCTTypeSimple && type != RCTTypeSimpleBulletproof && type != RCTTypeBulletproof && type != RCTTypeBulletproof2)
             return false;
           VARINT_FIELD(txnFee)
@@ -330,7 +330,7 @@ namespace rct {
         bool serialize_rctsig_prunable(Archive<W> &ar, uint8_t type, size_t inputs, size_t outputs, size_t mixin)
         {
           if (type == RCTTypeNull)
-            return true;
+            return ar.stream().good();
           if (type != RCTTypeFull && type != RCTTypeFullBulletproof && type != RCTTypeSimple && type != RCTTypeSimpleBulletproof && type != RCTTypeBulletproof && type != RCTTypeBulletproof2)
             return false;
           if (type == RCTTypeSimpleBulletproof || type == RCTTypeFullBulletproof)
@@ -458,12 +458,12 @@ namespace rct {
 
         keyV& get_pseudo_outs()
         {
-          return type == RCTTypeBulletproof || type == RCTTypeSimpleBulletproof || type == RCTTypeBulletproof2 ? p.pseudoOuts : pseudoOuts;
+          return type == RCTTypeBulletproof || type == RCTTypeBulletproof2 || type == RCTTypeSimpleBulletproof ? p.pseudoOuts : pseudoOuts;
         }
 
         keyV const& get_pseudo_outs() const
         {
-          return type == RCTTypeBulletproof || type == RCTTypeSimpleBulletproof || type == RCTTypeBulletproof2 ? p.pseudoOuts : pseudoOuts;
+          return type == RCTTypeBulletproof || type == RCTTypeBulletproof2 || type == RCTTypeSimpleBulletproof ? p.pseudoOuts : pseudoOuts;
         }
     };
 
